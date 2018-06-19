@@ -1,0 +1,17 @@
+{
+  "name": "elm-workshop-exercises",
+  "version": "1.0.0",
+  "description": "Elm Workshop Exercises",
+  "main": "index.js",
+  "scripts": {
+    "start": "elm-reactor",
+    "test": "elm-test"
+  },
+  "author": "Damjan Vujnovic",
+  "license": "ISC",
+  "devDependencies": {
+    "elm": "0.18.0",
+    "elm-format": "0.6.1-alpha",
+    "elm-test": "^0.18.12"
+  }
+}
