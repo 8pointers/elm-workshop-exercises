@@ -6,10 +6,12 @@ import Html.Events exposing (onClick)
 import Dict
 
 
+main : Program Never (Dict.Dict ( Int, Int ) Bool) Msg
 main =
     beginnerProgram { model = model, view = view, update = update }
 
 
+model : Dict.Dict k v
 model =
     Dict.empty
 
@@ -19,10 +21,16 @@ type Msg
     | Toggle ( Int, Int )
 
 
+tick : Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
+tick model =
+    Dict.empty
+
+
+update : Msg -> Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
 update msg model =
     case msg of
         Tick ->
-            Dict.empty
+            tick model
 
         Toggle ( row, column ) ->
             Dict.update ( row, column )
@@ -45,10 +53,12 @@ n =
     10
 
 
+cellSize : number
 cellSize =
     20
 
 
+view : Dict.Dict ( Int, Int ) v -> Html.Html Msg
 view model =
     div []
         [ node "link" [ rel "stylesheet", href "style.css" ] []
