@@ -11,7 +11,7 @@ main =
     beginnerProgram { model = model, view = view, update = update }
 
 
-model : Dict.Dict k v
+model : Dict.Dict ( Int, Int ) Bool
 model =
     Dict.empty
 
@@ -69,62 +69,58 @@ tick model =
             |> Dict.fromList
 
 
+toggle : ( Int, Int ) -> Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
+toggle cell =
+    Dict.update cell
+        (\isAlive ->
+            if isAlive == Just True then
+                Nothing
+            else
+                Just True
+        )
+
+
 update : Msg -> Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
-update msg model =
+update msg =
     case msg of
         Tick ->
-            tick model
+            tick
 
-        Toggle ( row, column ) ->
-            Dict.update ( row, column )
-                (\isAlive ->
-                    case isAlive of
-                        Nothing ->
-                            Just True
-
-                        Just True ->
-                            Nothing
-
-                        Just False ->
-                            Just True
-                )
-                model
+        Toggle cell ->
+            toggle cell
 
 
-n : number
-n =
-    10
-
-
-cellSize : number
-cellSize =
-    20
-
-
-view : Dict.Dict ( Int, Int ) v -> Html.Html Msg
+view : Dict.Dict ( Int, Int ) Bool -> Html.Html Msg
 view model =
-    div []
-        [ node "link" [ rel "stylesheet", href "style.css" ] []
+    let
+        n : number
+        n =
+            10
 
-        -- , span [] [ text (toString model) ]
-        , div [ style [ ( "width", toString (cellSize * n) ++ "px" ), ( "height", toString (cellSize * n) ++ "px" ) ] ]
-            (List.range 0 (n * n - 1)
-                |> List.map (\i -> ( i // n, i % n ))
-                |> List.map (\( row, column ) -> ( row, column, Dict.member ( row, column ) model ))
-                |> List.map
-                    (\( i, j, isAlive ) ->
-                        div
-                            [ style
-                                [ ( "top", toString (cellSize * i) )
-                                , ( "left", toString (cellSize * j) )
-                                , ( "width", "20px" )
-                                , ( "height", "20px" )
+        cellSize : number
+        cellSize =
+            20
+    in
+        div []
+            [ node "link" [ rel "stylesheet", href "style.css" ] []
+            , div [ style [ ( "width", toString (cellSize * n) ++ "px" ), ( "height", toString (cellSize * n) ++ "px" ) ] ]
+                (List.range 0 (n * n - 1)
+                    |> List.map (\i -> ( i // n, i % n ))
+                    |> List.map (\( row, column ) -> ( row, column, Dict.member ( row, column ) model ))
+                    |> List.map
+                        (\( i, j, isAlive ) ->
+                            div
+                                [ style
+                                    [ ( "top", toString (cellSize * i) )
+                                    , ( "left", toString (cellSize * j) )
+                                    , ( "width", "20px" )
+                                    , ( "height", "20px" )
+                                    ]
+                                , classList [ ( "cell", True ), ( "alive", isAlive ) ]
+                                , onClick (Toggle ( i, j ))
                                 ]
-                            , classList [ ( "cell", True ), ( "alive", isAlive ) ]
-                            , onClick (Toggle ( i, j ))
-                            ]
-                            []
-                    )
-            )
-        , button [ onClick Tick ] [ text "Tick" ]
-        ]
+                                []
+                        )
+                )
+            , button [ onClick Tick ] [ text "Tick" ]
+            ]
