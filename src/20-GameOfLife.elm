@@ -6,19 +6,27 @@ import Html.Events exposing (onClick)
 import Dict
 
 
-main : Program Never (Dict.Dict ( Int, Int ) Bool) Msg
+main : Program Never GameState Msg
 main =
     beginnerProgram { model = model, view = view, update = update }
 
 
-model : Dict.Dict ( Int, Int ) Bool
+type alias Cell =
+    ( Int, Int )
+
+
+type alias GameState =
+    Dict.Dict Cell Bool
+
+
+model : GameState
 model =
     Dict.empty
 
 
 type Msg
     = Tick
-    | Toggle ( Int, Int )
+    | Toggle Cell
 
 
 deltas : List ( Int, Int, Int )
@@ -36,7 +44,7 @@ deltas =
             )
 
 
-neighbours : Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Int
+neighbours : GameState -> Dict.Dict Cell Int
 neighbours currentState =
     Dict.keys currentState
         |> List.map (\( row, column ) -> (List.map (\( deltaRow, deltaColumn, delta ) -> ( row + deltaRow, column + deltaColumn, delta )) deltas))
@@ -57,7 +65,7 @@ neighbours currentState =
             Dict.empty
 
 
-tick : Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
+tick : GameState -> GameState
 tick model =
     let
         n =
@@ -69,7 +77,7 @@ tick model =
             |> Dict.fromList
 
 
-toggle : ( Int, Int ) -> Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
+toggle : Cell -> GameState -> GameState
 toggle cell =
     Dict.update cell
         (\isAlive ->
@@ -80,7 +88,7 @@ toggle cell =
         )
 
 
-update : Msg -> Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
+update : Msg -> GameState -> GameState
 update msg =
     case msg of
         Tick ->
@@ -90,7 +98,7 @@ update msg =
             toggle cell
 
 
-view : Dict.Dict ( Int, Int ) Bool -> Html.Html Msg
+view : GameState -> Html.Html Msg
 view model =
     let
         n : number
