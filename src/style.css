@@ -1,8 +1,8 @@
 .cell {
   float: left;
-  background-color: yellow;
+  background-color: #EEEE44;
 }
 
 .alive {
-  background-color: blue;
+  background-color: #4444AA;
 }
