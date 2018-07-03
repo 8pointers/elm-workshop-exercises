@@ -21,9 +21,52 @@ type Msg
     | Toggle ( Int, Int )
 
 
+deltas : List ( Int, Int, Int )
+deltas =
+    List.range 0 8
+        |> List.map
+            (\i ->
+                ( i // 3 - 1
+                , i % 3 - 1
+                , if i == 4 then
+                    0
+                  else
+                    1
+                )
+            )
+
+
+neighbours : Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Int
+neighbours currentState =
+    Dict.keys currentState
+        |> List.map (\( row, column ) -> (List.map (\( deltaRow, deltaColumn, delta ) -> ( row + deltaRow, column + deltaColumn, delta )) deltas))
+        |> List.foldl List.append []
+        |> List.foldl
+            (\( row, column, delta ) ->
+                (Dict.update ( row, column )
+                    (\neighbours ->
+                        case neighbours of
+                            Nothing ->
+                                Just delta
+
+                            Just n ->
+                                Just (n + delta)
+                    )
+                )
+            )
+            Dict.empty
+
+
 tick : Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
 tick model =
-    Dict.empty
+    let
+        n =
+            neighbours model
+    in
+        Dict.toList n
+            |> List.filter (\( cell, numNeighbours ) -> Dict.member cell model && numNeighbours == 2 || numNeighbours == 3)
+            |> List.map (\( cell, _ ) -> ( cell, True ))
+            |> Dict.fromList
 
 
 update : Msg -> Dict.Dict ( Int, Int ) Bool -> Dict.Dict ( Int, Int ) Bool
@@ -62,7 +105,8 @@ view : Dict.Dict ( Int, Int ) v -> Html.Html Msg
 view model =
     div []
         [ node "link" [ rel "stylesheet", href "style.css" ] []
-        , span [] [ text (toString model) ]
+
+        -- , span [] [ text (toString model) ]
         , div [ style [ ( "width", toString (cellSize * n) ++ "px" ), ( "height", toString (cellSize * n) ++ "px" ) ] ]
             (List.range 0 (n * n - 1)
                 |> List.map (\i -> ( i // n, i % n ))
