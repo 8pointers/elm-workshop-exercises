@@ -6,11 +6,6 @@ import Html.Events exposing (onClick)
 import Dict
 
 
-main : Program Never GameState Msg
-main =
-    beginnerProgram { model = model, view = view, update = update }
-
-
 type alias Cell =
     ( Int, Int )
 
@@ -19,14 +14,19 @@ type alias GameState =
     Dict.Dict Cell Bool
 
 
-model : GameState
-model =
-    Dict.empty
-
-
 type Msg
     = Tick
     | Toggle Cell
+
+
+main : Program Never GameState Msg
+main =
+    beginnerProgram { model = model, view = view, update = update }
+
+
+model : GameState
+model =
+    Dict.empty
 
 
 toggle : Cell -> GameState -> GameState
