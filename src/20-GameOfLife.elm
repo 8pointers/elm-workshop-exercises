@@ -29,6 +29,17 @@ type Msg
     | Toggle Cell
 
 
+toggle : Cell -> GameState -> GameState
+toggle cell =
+    Dict.update cell
+        (\isAlive ->
+            if isAlive == Just True then
+                Nothing
+            else
+                Just True
+        )
+
+
 deltas : List ( Int, Int, Int )
 deltas =
     List.range 0 8
@@ -77,25 +88,14 @@ tick model =
             |> Dict.fromList
 
 
-toggle : Cell -> GameState -> GameState
-toggle cell =
-    Dict.update cell
-        (\isAlive ->
-            if isAlive == Just True then
-                Nothing
-            else
-                Just True
-        )
-
-
 update : Msg -> GameState -> GameState
 update msg =
     case msg of
-        Tick ->
-            tick
-
         Toggle cell ->
             toggle cell
+
+        Tick ->
+            tick
 
 
 view : GameState -> Html.Html Msg
