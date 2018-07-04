@@ -121,8 +121,8 @@ view model =
                                 [ style
                                     [ ( "top", toString (cellSize * i) )
                                     , ( "left", toString (cellSize * j) )
-                                    , ( "width", "20px" )
-                                    , ( "height", "20px" )
+                                    , ( "width", toString cellSize ++ "px" )
+                                    , ( "height", toString cellSize ++ "px" )
                                     ]
                                 , classList [ ( "cell", True ), ( "alive", isAlive ) ]
                                 , onClick (Toggle ( i, j ))
