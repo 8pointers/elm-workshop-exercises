@@ -19,16 +19,6 @@ type Msg
     | Toggle Cell
 
 
-main : Program Never GameState Msg
-main =
-    beginnerProgram { model = model, view = view, update = update }
-
-
-model : GameState
-model =
-    Dict.empty
-
-
 toggle : Cell -> GameState -> GameState
 toggle cell =
     Dict.update cell
@@ -118,3 +108,8 @@ view model =
                 )
             , button [ onClick Tick ] [ text "Tick" ]
             ]
+
+
+main : Program Never GameState Msg
+main =
+    beginnerProgram { model = Dict.empty, view = view, update = update }
