@@ -42,17 +42,7 @@ toggle cell =
 
 deltas : List ( Int, Int, Int )
 deltas =
-    List.range 0 8
-        |> List.map
-            (\i ->
-                ( i // 3 - 1
-                , i % 3 - 1
-                , if i == 4 then
-                    0
-                  else
-                    1
-                )
-            )
+    [ ( -1, -1, 1 ), ( -1, 0, 1 ), ( -1, 1, 1 ), ( 0, -1, 1 ), ( 0, 0, 0 ), ( 0, 1, 1 ), ( 1, -1, 1 ), ( 1, 0, 1 ), ( 1, 1, 1 ) ]
 
 
 neighbours : GameState -> Dict.Dict Cell Int
@@ -78,14 +68,10 @@ neighbours currentState =
 
 tick : GameState -> GameState
 tick model =
-    let
-        n =
-            neighbours model
-    in
-        Dict.toList n
-            |> List.filter (\( cell, numNeighbours ) -> Dict.member cell model && numNeighbours == 2 || numNeighbours == 3)
-            |> List.map (\( cell, _ ) -> ( cell, True ))
-            |> Dict.fromList
+    Dict.toList (neighbours model)
+        |> List.filter (\( cell, numNeighbours ) -> Dict.member cell model && numNeighbours == 2 || numNeighbours == 3)
+        |> List.map (\( cell, _ ) -> ( cell, True ))
+        |> Dict.fromList
 
 
 update : Msg -> GameState -> GameState
