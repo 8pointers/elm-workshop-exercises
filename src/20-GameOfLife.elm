@@ -87,11 +87,11 @@ update msg =
 view : GameState -> Html.Html Msg
 view model =
     let
-        n : number
+        n : Int
         n =
             10
 
-        cellSize : number
+        cellSize : Int
         cellSize =
             20
     in
